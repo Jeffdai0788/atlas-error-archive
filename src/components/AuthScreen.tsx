@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Shield, ArrowRight, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,9 +12,17 @@ const AuthScreen = () => {
   const [step, setStep] = useState<'email' | 'verify'>('email');
   const { login, verify2FA, isLoading } = useAuth();
 
+  // Debug logging for component state
+  useEffect(() => {
+    console.log('AuthScreen state:', { step, email, verificationCode, isLoading });
+  }, [step, email, verificationCode, isLoading]);
+
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('AuthScreen: Email form submitted with:', email);
+    
     if (!email || !email.includes('@')) {
+      console.log('AuthScreen: Invalid email format');
       toast({
         title: "Invalid Email",
         description: "Please enter a valid email address.",
@@ -23,13 +31,18 @@ const AuthScreen = () => {
       return;
     }
     
+    console.log('AuthScreen: Calling login function');
     await login(email);
+    console.log('AuthScreen: Login function completed, switching to verify step');
     setStep('verify');
   };
 
   const handleVerificationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('AuthScreen: Verification form submitted with code:', verificationCode);
+    
     if (verificationCode.length !== 6) {
+      console.log('AuthScreen: Invalid code length');
       toast({
         title: "Invalid Code",
         description: "Please enter the 6-digit verification code.",
@@ -38,15 +51,21 @@ const AuthScreen = () => {
       return;
     }
 
+    console.log('AuthScreen: Calling verify2FA function');
     const success = await verify2FA(verificationCode);
     if (!success) {
+      console.log('AuthScreen: Verification failed');
       toast({
         title: "Verification Failed",
         description: "Invalid code. Please try again. (Hint: use 123456)",
         variant: "destructive",
       });
+    } else {
+      console.log('AuthScreen: Verification successful');
     }
   };
+
+  console.log('AuthScreen: Rendering with step:', step);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
@@ -58,6 +77,11 @@ const AuthScreen = () => {
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome to EdAtlas</h1>
           <p className="text-gray-600">Secure access to your learning journey</p>
+        </div>
+
+        {/* Debug info */}
+        <div className="mb-4 p-2 bg-yellow-100 rounded text-xs text-yellow-800">
+          Debug: Step = {step}, Loading = {isLoading.toString()}
         </div>
 
         {/* Email Step */}
@@ -158,7 +182,10 @@ const AuthScreen = () => {
                 type="button" 
                 variant="ghost" 
                 className="w-full text-blue-600 hover:text-blue-700"
-                onClick={() => setStep('email')}
+                onClick={() => {
+                  console.log('AuthScreen: Back to email button clicked');
+                  setStep('email');
+                }}
                 disabled={isLoading}
               >
                 ← Back to email
