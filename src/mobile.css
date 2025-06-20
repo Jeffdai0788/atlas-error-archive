@@ -1,0 +1,40 @@
+
+/* Mobile-specific styles for Capacitor app */
+@media (max-width: 768px) {
+  /* Ensure touch targets are large enough */
+  button, .clickable {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Prevent zoom on input focus */
+  input, select, textarea {
+    font-size: 16px;
+  }
+  
+  /* Safe area handling for notched devices */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Capacitor-specific styles */
+body.capacitor {
+  /* Disable overscroll on iOS */
+  overscroll-behavior: none;
+  /* Prevent text selection */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection in input fields */
+body.capacitor input, 
+body.capacitor textarea, 
+body.capacitor [contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
+}
